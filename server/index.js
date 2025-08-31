@@ -1,7 +1,7 @@
 const http = require("http");
 const express = require("express");
 const config = require("../config");
-const socket = require("./lib/socket");
+const initSocket = require("./lib/socket");
 const cors = require("cors");
 const { Server } = require("socket.io");
 
