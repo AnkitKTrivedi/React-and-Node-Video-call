@@ -3,20 +3,26 @@ const express = require("express");
 const config = require("../config");
 const socket = require("./lib/socket");
 const cors = require("cors");
+const { Server } = require("socket.io");
 
 const app = express();
-app.use(cors({ origin: "*" }));
+app.use(cors({ origin: "https://stunning-pegasus-8c90f6.netlify.app" }));
 const server = http.createServer(app);
-const io = require("socket.io")(server, {
+
+const io = new Server(server, {
   cors: {
-    origin: "*", // or "https://your-frontend.netlify.app"
+    origin: "https://stunning-pegasus-8c90f6.netlify.app",
     methods: ["GET", "POST"],
   },
+  path: "/bridge", // ✅ consistent path
 });
+
+// Initialize socket handlers
+io.on("connection", initSocket);
 
 app.use("/", express.static(`${__dirname}/../client/dist`));
 
 server.listen(config.PORT, () => {
-  socket(server);
+  // socket(server);
   console.log("Server is listening at :", config.PORT);
 });

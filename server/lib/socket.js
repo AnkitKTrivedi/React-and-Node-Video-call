@@ -1,5 +1,4 @@
-const io = require('socket.io');
-const users = require('./users');
+const users = require("./users");
 
 /**
  * Initialize when a connection is made
@@ -8,42 +7,38 @@ const users = require('./users');
 function initSocket(socket) {
   let id;
   socket
-    .on('init', async () => {
+    .on("init", async () => {
       id = await users.create(socket);
       if (id) {
-        socket.emit('init', { id });
+        socket.emit("init", { id });
       } else {
-        socket.emit('error', { message: 'Failed to generating user id' });
+        socket.emit("error", { message: "Failed to generating user id" });
       }
     })
-    .on('request', (data) => {
+    .on("request", (data) => {
       const receiver = users.get(data.to);
       if (receiver) {
-        receiver.emit('request', { from: id });
+        receiver.emit("request", { from: id });
       }
     })
-    .on('call', (data) => {
+    .on("call", (data) => {
       const receiver = users.get(data.to);
       if (receiver) {
-        receiver.emit('call', { ...data, from: id });
+        receiver.emit("call", { ...data, from: id });
       } else {
-        socket.emit('failed');
+        socket.emit("failed");
       }
     })
-    .on('end', (data) => {
+    .on("end", (data) => {
       const receiver = users.get(data.to);
       if (receiver) {
-        receiver.emit('end');
+        receiver.emit("end");
       }
     })
-    .on('disconnect', () => {
+    .on("disconnect", () => {
       users.remove(id);
-      console.log(id, 'disconnected');
+      console.log(id, "disconnected");
     });
 }
 
-module.exports = (server) => {
-  io({ path: '/bridge', serveClient: false })
-    .listen(server, { log: true })
-    .on('connection', initSocket);
-};
+module.exports = initSocket;
