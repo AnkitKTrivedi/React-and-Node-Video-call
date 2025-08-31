@@ -1,14 +1,16 @@
-const http = require('http');
-const express = require('express');
-const config = require('../config');
-const socket = require('./lib/socket');
+const http = require("http");
+const express = require("express");
+const config = require("../config");
+const socket = require("./lib/socket");
+const cors = require("cors");
 
 const app = express();
+app.use(cors({ origin: "*" }));
 const server = http.createServer(app);
 
-app.use('/', express.static(`${__dirname}/../client/dist`));
+app.use("/", express.static(`${__dirname}/../client/dist`));
 
 server.listen(config.PORT, () => {
   socket(server);
-  console.log('Server is listening at :', config.PORT);
+  console.log("Server is listening at :", config.PORT);
 });
